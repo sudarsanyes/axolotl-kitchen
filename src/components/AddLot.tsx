@@ -5,7 +5,7 @@ interface Ingredient {
   id: string;
   name: string;
   brand: string;
-  expires_on: Date;
+  expires_on: string;
 }
 
 export default function AddLot() {
