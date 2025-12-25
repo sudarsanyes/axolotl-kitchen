@@ -39,55 +39,8 @@ export default function AddIngredient() {
   };
 
   return (
-    // <div className="form-grid">
-    //   <h2>Add New Ingredient</h2>
-
-    //   <label>
-    //     Name
-    //     <input
-    //       type="text"
-    //       value={name}
-    //       onChange={e => setName(e.target.value)}
-    //       placeholder="Ingredient Name"
-    //     />
-    //   </label> <br />
-
-    //   <label>
-    //     Brand
-    //     <input
-    //       type="text"
-    //       value={brand}
-    //       onChange={e => setBrand(e.target.value)}
-    //       placeholder="Brand"
-    //     />
-    //   </label> <br />
-
-    //   <label>
-    //     Supplier
-    //     <input
-    //       type="text"
-    //       value={supplier}
-    //       onChange={e => setSupplier(e.target.value)}
-    //       placeholder="Supplier"
-    //     />
-    //   </label> <br />
-
-    //   <label>
-    //     Expiry Date
-    //     <input
-    //       type="date"
-    //       value={expiresOn}
-    //       onChange={e => setExpiresOn(e.target.value)}
-    //     />
-    //   </label> <br />
-
-    //   <button onClick={handleSubmit} disabled={loading}>
-    //     {loading ? 'Adding...' : 'Add Ingredient'}
-    //   </button> <br /> <br />
-    //   <hr />
-    // </div>
     <div className="form-grid">
-      <h2 className="full-width">Stockpile ingredient</h2>
+      <h2 className="full-width">🛒 Stockpile ingredient</h2>
 
       <label>Name</label>
       <input
@@ -121,7 +74,7 @@ export default function AddIngredient() {
       />
 
       <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Adding..." : "Add ingredient"}
+        {loading ? "Adding..." : "Add ingredient 🛒"}
       </button>
     </div>
   );

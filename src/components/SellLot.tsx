@@ -74,7 +74,7 @@ export default function SellLot() {
 
   return (
     <div className="form-grid">
-      <h2 className="full-width">Record a sale</h2>
+      <h2 className="full-width">🤑 Record a sale</h2>
 
       <label>Select lot</label>
 
@@ -100,7 +100,7 @@ export default function SellLot() {
       />
 
       <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Recording..." : "Record sale 🎉"}
+        {loading ? "Recording..." : "Record sale 🤑"}
       </button>
     </div>
   );

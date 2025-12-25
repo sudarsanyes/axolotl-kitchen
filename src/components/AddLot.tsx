@@ -103,7 +103,7 @@ export default function AddLot() {
 
   return (
     <div className="form-grid">
-      <h2 className="full-width">Register new lot</h2>
+      <h2 className="full-width">📦 Register new lot</h2>
 
       <label>Product name</label>
 
@@ -137,7 +137,7 @@ export default function AddLot() {
       ))}
 
       <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Creating…" : "Create lot"}
+        {loading ? "Creating…" : "Create lot 📦"}
       </button>
     </div>
   );
