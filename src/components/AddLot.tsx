@@ -103,7 +103,7 @@ export default function AddLot() {
 
   return (
     <div className="form-grid">
-      <h2 className="full-width">New lot</h2>
+      <h2 className="full-width">Register new lot</h2>
 
       <label>Product name</label>
 

@@ -74,7 +74,7 @@ export default function SellLot() {
 
   return (
     <div className="form-grid">
-      <h2 className="full-width">Sales</h2>
+      <h2 className="full-width">Record a sale</h2>
 
       <label>Select lot</label>
 
