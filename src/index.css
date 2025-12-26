@@ -150,3 +150,22 @@ th {
   font-size: 0.9em;
   color: #aeaeae;
 }
+
+.app-header {
+  display: flex;
+  flex-direction: column; /* 👈 stack */
+  align-items: center; /* horizontal centering */
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  height: 120px; /* slightly bigger feels nicer */
+  width: auto;
+  margin-bottom: 0.75rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-weight: 600;
+}

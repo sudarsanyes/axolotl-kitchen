@@ -1,20 +1,14 @@
-// import AddLot from "./components/AddLot";
-// import SellLot from "./components/SellLot";
-// import AddIngredient from "./components/AddIngredient";
 import InventoryPage from "./components/InventoryPage";
+import logo from "./assets/logo.png";
 
 function App() {
   return (
     <div className="App">
-      <img
-        src="./assets/logo.png"
-        alt="Thea's Cookies & Cakes Logo"
-        className="logo"
-      />
-      <h1>Thea's Cookies & Cakes</h1>
-      {/* <AddIngredient />
-      <AddLot />
-      <SellLot /> */}
+      <header className="app-header">
+        <img src={logo} alt="Thea's Cookies & Cakes Logo" className="logo" />
+        <h1>Thea's Cookies & Cakes</h1>
+      </header>
+
       <InventoryPage />
     </div>
   );
