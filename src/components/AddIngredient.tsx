@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
 
-export default function AddIngredient() {
+interface AddIngredientProps {
+  onIngredientAdded: () => void;
+}
+
+export default function AddIngredient({
+  onIngredientAdded,
+}: AddIngredientProps) {
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [supplier, setSupplier] = useState("");
@@ -35,6 +41,7 @@ export default function AddIngredient() {
       alert("Something went wrong while adding the ingredient.");
     } finally {
       setLoading(false);
+      onIngredientAdded();
     }
   };
 

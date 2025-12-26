@@ -2,6 +2,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import Select from "react-select";
 
+interface SellLotProps {
+  lotsVersion: number;
+}
+
 interface ProductLot {
   id: string;
   lot_code: string;
@@ -18,7 +22,7 @@ interface SaleLot {
   expires_on: string;
 }
 
-export default function SellLot() {
+export default function SellLot({ lotsVersion }: SellLotProps) {
   const [unsoldLots, setUnsoldLots] = useState<ProductLot[]>([]);
   const [saleLot, setSaleLot] = useState<SaleLot[]>([]); // sale <-> lot map
   const [selectedLot, setSelectedLot] = useState("");
@@ -68,7 +72,7 @@ export default function SellLot() {
   useEffect(() => {
     fetchUnsoldLots();
     fetchSaleLots();
-  }, []);
+  }, [lotsVersion]);
 
   const handleSubmit = async () => {
     if (!selectedLot || !customer) {

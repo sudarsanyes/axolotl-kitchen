@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
+interface AddLotProps {
+  ingredientsVersion: number;
+  onLotCreated: () => void;
+}
+
 interface Ingredient {
   id: string;
   name: string;
@@ -8,7 +13,10 @@ interface Ingredient {
   expires_on: string;
 }
 
-export default function AddLot() {
+export default function AddLot({
+  ingredientsVersion,
+  onLotCreated,
+}: AddLotProps) {
   const [unavailableIngredients, setUnavailableIngredients] = useState<
     Ingredient[]
   >([]);
@@ -51,7 +59,7 @@ export default function AddLot() {
   useEffect(() => {
     fetchIngredients();
     fetchUnavailableIngredients();
-  }, []);
+  }, [ingredientsVersion]);
 
   const toggleIngredient = (id: string) => {
     setSelectedIngredients((prev) =>
@@ -116,6 +124,7 @@ export default function AddLot() {
       alert("Something went wrong while creating the lot.");
     } finally {
       setLoading(false);
+      onLotCreated();
     }
   };
 
