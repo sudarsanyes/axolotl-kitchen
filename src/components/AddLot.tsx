@@ -9,6 +9,10 @@ interface Ingredient {
 }
 
 export default function AddLot() {
+  const [unavailableIngredients, setUnavailableIngredients] = useState<
+    Ingredient[]
+  >([]);
+  const [showUnavailable, setShowUnavailable] = useState(false);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [productName, setProductName] = useState("");
@@ -17,22 +21,36 @@ export default function AddLot() {
   );
   const [loading, setLoading] = useState(false);
 
+  const fetchIngredients = async () => {
+    const { data, error } = await supabase
+      .from("available_ingredients")
+      .select("id, name, brand, expires_on")
+      .order("name");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setIngredients(data);
+  };
+
+  const fetchUnavailableIngredients = async () => {
+    const { data, error } = await supabase
+      .from("unavailable_ingredients")
+      .select("id, name, brand, expires_on")
+      .order("name");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setUnavailableIngredients(data);
+  };
+
   // Fetch ingredients
   useEffect(() => {
-    const fetchIngredients = async () => {
-      const { data, error } = await supabase
-        .from("ingredients")
-        .select("id, name, brand, expires_on")
-        .order("name");
-
-      if (error) {
-        console.error(error);
-        return;
-      }
-      setIngredients(data);
-    };
-
     fetchIngredients();
+    fetchUnavailableIngredients();
   }, []);
 
   const toggleIngredient = (id: string) => {
@@ -120,8 +138,7 @@ export default function AddLot() {
         onChange={(e) => setManufacturedOn(e.target.value)}
       />
 
-      <h3 className="full-width">Ingredients</h3>
-
+      <h3 className="full-width">Ingredients (Available)</h3>
       {ingredients.map((i) => (
         <label key={i.id}>
           <input
@@ -135,6 +152,35 @@ export default function AddLot() {
           </span>
         </label>
       ))}
+
+      {/* <h4 className="full-width">Ingredients (Unavailable)</h4>
+      {unavailableIngredients.map((i) => (
+        <label key={i.id}>
+          {" "}
+          {i.name} / {i.expires_on}{" "}
+        </label>
+      ))} */}
+
+      <h4
+        className="full-width expander-header"
+        onClick={() => setShowUnavailable(!showUnavailable)}
+      >
+        Ingredients (Unavailable)
+        <span className="chevron kicker interactive">
+          {showUnavailable ? "Hide" : "Show"}
+        </span>
+      </h4>
+
+      {/* Expander Content */}
+      {showUnavailable && (
+        <div className="expander-content">
+          {unavailableIngredients.map((i) => (
+            <label key={i.id} className="kicker unavailable-ingredient">
+              {i.name} / {i.expires_on}
+            </label>
+          ))}
+        </div>
+      )}
 
       <button onClick={handleSubmit} disabled={loading}>
         {loading ? "Creating…" : "Create lot 📦"}

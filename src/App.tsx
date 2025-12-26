@@ -1,6 +1,6 @@
 import AddLot from "./components/AddLot";
 import SellLot from "./components/SellLot";
-import AddIngredient from "./components/AddIngredients";
+import AddIngredient from "./components/AddIngredient";
 
 function App() {
   return (
