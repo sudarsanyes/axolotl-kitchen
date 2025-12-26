@@ -29,7 +29,6 @@ a:hover {
 html,
 body {
   margin: 0;
-  padding: 0;
   background: #121212; /* or your app background */
   overflow-x: hidden;
 }
@@ -86,8 +85,7 @@ button:focus-visible {
   background: #e2e2e2;
   color: #213547;
   padding: 8px;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 3rem;
 }
 
 .form-grid button {
