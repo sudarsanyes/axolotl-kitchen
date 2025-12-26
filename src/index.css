@@ -23,12 +23,23 @@ a:hover {
   color: #535bf2;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  padding: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+.page {
+  padding: 1rem;
+  max-width: 480px; /* 👈 mobile-first */
+  margin: 0 auto;
 }
 
 h1 {
@@ -156,16 +167,9 @@ th {
   flex-direction: column; /* 👈 stack */
   align-items: center; /* horizontal centering */
   text-align: center;
-  margin-bottom: 2rem;
 }
 
 .logo {
   height: 120px; /* slightly bigger feels nicer */
   width: auto;
-  margin-bottom: 0.75rem;
-}
-
-.app-header h1 {
-  margin: 0;
-  font-weight: 600;
 }

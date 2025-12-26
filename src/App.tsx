@@ -6,10 +6,11 @@ function App() {
     <div className="App">
       <header className="app-header">
         <img src={logo} alt="Thea's Cookies & Cakes Logo" className="logo" />
-        <h1>Thea's Cookies & Cakes</h1>
+        <h3>Thea's Cookies & Cakes</h3>
       </header>
-
-      <InventoryPage />
+      <main className="page">
+        <InventoryPage />
+      </main>
     </div>
   );
 }
