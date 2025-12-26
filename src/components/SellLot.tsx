@@ -27,7 +27,11 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
   const [saleLot, setSaleLot] = useState<SaleLot[]>([]); // sale <-> lot map
   const [selectedLot, setSelectedLot] = useState("");
   const [customer, setCustomer] = useState("");
+  const [sellingPrice, setSellingPrice] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const [todayTotal, setTodayTotal] = useState(0);
+  const [showTotals, setShowTotals] = useState(false);
 
   const lotOptionsForSelect = unsoldLots.map((lot) => ({
     value: lot.id,
@@ -68,6 +72,14 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
     setSaleLot(data || []);
   };
 
+  const fetchTodayTotal = async () => {
+    const { data, error } = await supabase.rpc("today_sales_total");
+
+    if (!error) {
+      setTodayTotal(data);
+    }
+  };
+
   // Fetch unsold lots from the view
   useEffect(() => {
     fetchUnsoldLots();
@@ -75,8 +87,8 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
   }, [lotsVersion]);
 
   const handleSubmit = async () => {
-    if (!selectedLot || !customer) {
-      alert("Please select a lot and enter a customer name.");
+    if (!selectedLot && !customer) {
+      alert("⚠️ Please select a lot and enter a customer name");
       return;
     }
 
@@ -86,16 +98,18 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
       const { error } = await supabase.from("sales").insert({
         product_lot_id: selectedLot,
         customer,
+        selling_price: sellingPrice,
         sold_on: new Date().toISOString().slice(0, 10),
       });
 
       if (error) throw error;
 
-      alert("Sale recorded successfully ✅");
+      alert("✅ Sale recorded successfully");
 
       // Reset form
       setSelectedLot("");
       setCustomer("");
+      setSellingPrice(0);
 
       // Refresh unsold lots
       const { data } = await supabase
@@ -106,18 +120,18 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
       setUnsoldLots(data || []);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong while recording the sale.");
+      alert("🛑 Something went wrong while recording the sale!");
     } finally {
       setLoading(false);
+      fetchSaleLots();
+      setShowTotals(false);
     }
   };
 
   return (
     <div className="form-grid">
-      <h2 className="full-width">🤑 Record a sale</h2>
-
-      <label>Select lot</label>
-
+      <h2 className="full-width">🤑 Add crumbs to the ledger</h2>
+      <label>* Select lot</label>
       {/* Classic drop-down */}
       {/* <select
         value={selectedLot}
@@ -130,28 +144,30 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
           </option>
         ))}
       </select> */}
-
       <Select
         options={lotOptionsForSelect}
         value={lotOptionsForSelect.find((o) => o.value === selectedLot) || null}
         onChange={(opt) => setSelectedLot(opt?.value || "")}
       />
-
-      <label>Customer name</label>
-
+      <label>* Customer name</label>
       <input
         type="text"
         value={customer}
         onChange={(e) => setCustomer(e.target.value)}
         placeholder="Customer name"
       />
-
+      <label>* Selling price</label>
+      <input
+        type="number"
+        value={sellingPrice}
+        onChange={(e) => setSellingPrice(Number(e.target.value))}
+        placeholder="Selling price"
+      />
       <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Recording..." : "Record sale 🤑"}
+        {loading ? "Recording..." : "Record sale"}
       </button>
-
       <hr />
-      <h2 className="full-width">🍪 Cookies fed so far</h2>
+      <h2 className="full-width">🍪 Cookie trail</h2>
       <table className="full-width">
         <thead>
           <tr>
@@ -170,6 +186,18 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
           </tr>
         ))}
       </table>
+      <button
+        onClick={() => {
+          fetchTodayTotal();
+          setShowTotals(!showTotals);
+        }}
+      >
+        {showTotals ? "Hide totals" : "Show totals"}
+      </button>
+
+      {showTotals && (
+        <span className="full-width kicker">Today's total: {todayTotal}</span>
+      )}
     </div>
   );
 }

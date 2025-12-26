@@ -69,7 +69,9 @@ export default function AddLot({
 
   const handleSubmit = async () => {
     if (!productName || selectedIngredients.length === 0) {
-      alert("Please enter a product name and select at least one ingredient.");
+      alert(
+        "⚠️ Please enter a product name and select at least one ingredient."
+      );
       return;
     }
 
@@ -114,14 +116,14 @@ export default function AddLot({
 
       if (linkError) throw linkError;
 
-      alert("Lot created successfully ✅");
+      alert("✅ Lot created successfully");
 
       // Reset form
       setProductName("");
       setSelectedIngredients([]);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong while creating the lot.");
+      alert("🛑 Something went wrong while creating the lot!");
     } finally {
       setLoading(false);
       onLotCreated();
@@ -130,9 +132,9 @@ export default function AddLot({
 
   return (
     <div className="form-grid">
-      <h2 className="full-width">📦 Register new lot</h2>
+      <h2 className="full-width">📦 Add a fresh cookie batch</h2>
 
-      <label>Product name</label>
+      <label>* Product name</label>
 
       <input
         value={productName}
@@ -147,7 +149,7 @@ export default function AddLot({
         onChange={(e) => setManufacturedOn(e.target.value)}
       />
 
-      <h3 className="full-width">Ingredients (Available)</h3>
+      <h3 className="full-width">* Ingredients (Available)</h3>
       {ingredients.map((i) => (
         <label key={i.id}>
           <input
@@ -192,7 +194,7 @@ export default function AddLot({
       )}
 
       <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Creating…" : "Create lot 📦"}
+        {loading ? "Creating…" : "Create lot"}
       </button>
     </div>
   );
