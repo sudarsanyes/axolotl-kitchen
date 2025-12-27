@@ -43,7 +43,7 @@ body {
 
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: 1px solid #fff;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
@@ -51,13 +51,6 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 @media (prefers-color-scheme: light) {
@@ -80,12 +73,9 @@ button:focus-visible {
   grid-template-columns: 150px 1fr;
   gap: 12px 20px;
   max-width: 480px;
-  border: #f9f9f9 solid 1px;
   border-radius: 8px;
-  background: #e2e2e2;
-  color: #213547;
   padding: 8px;
-  margin-bottom: 3rem;
+  margin-bottom: 3em;
 }
 
 .form-grid button {
@@ -95,6 +85,28 @@ button:focus-visible {
 
 .full-width {
   grid-column: 1 / -1;
+}
+
+.tab-list {
+  display: flex;
+  gap: 8px;
+  padding: 0 12px;
+  overflow-x: auto;
+}
+
+.tab-item {
+  border: 1px solid transparent;
+  font-size: 1em;
+  cursor: pointer;
+  width: 250px;
+  opacity: 0.3;
+}
+.tab-item--active {
+  border-bottom: #646cff solid 3px;
+  font-weight: 600;
+  border-radius: 4px 4px 0 0;
+  background: transparent;
+  opacity: 1;
 }
 
 .kicker {
