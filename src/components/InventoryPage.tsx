@@ -37,7 +37,7 @@ export default function InventoryPage() {
             />
           </Tabs.Content>
           <Tabs.Content value="register_sale">
-            <SellLot lotsVersion={lotsVersion} />;
+            <SellLot lotsVersion={lotsVersion} />
           </Tabs.Content>
         </Tabs.Root>
       </Container>

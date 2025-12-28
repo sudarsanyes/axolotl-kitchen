@@ -1,6 +1,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import Select from "react-select";
+import {
+  Button,
+  Container,
+  createListCollection,
+  Field,
+  Fieldset,
+  HStack,
+  Input,
+  NumberInput,
+  Portal,
+  Select,
+  Stack,
+  Table,
+  Tag,
+  VStack,
+} from "@chakra-ui/react";
 
 interface SellLotProps {
   lotsVersion: number;
@@ -33,16 +48,11 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
   const [todayTotal, setTodayTotal] = useState(0);
   const [showTotals, setShowTotals] = useState(false);
 
-  const lotOptionsForSelect = unsoldLots.map((lot) => ({
-    value: lot.id,
-    label: (
-      <div className="full-width">
-        {lot.product_name}
-        <span className="kicker full-width">LOT: {lot.lot_code}</span>
-        <span className="kicker full-width">Exp: {lot.expires_on}</span>
-      </div>
-    ),
-  }));
+  const unsoldLotsCollection = createListCollection<ProductLot>({
+    items: unsoldLots,
+    itemToString: (lot) => lot.product_name,
+    itemToValue: (lot) => lot.id,
+  });
 
   const fetchUnsoldLots = async () => {
     const { data, error } = await supabase
@@ -95,6 +105,10 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
     setLoading(true);
 
     try {
+      console.log("Selected lot:" + selectedLot);
+      console.log(
+        customer + sellingPrice + new Date().toISOString().slice(0, 10)
+      );
       const { error } = await supabase.from("sales").insert({
         product_lot_id: selectedLot,
         customer,
@@ -129,75 +143,140 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
   };
 
   return (
-    <div className="form-grid">
-      <h2 className="full-width">🤑 Add crumbs to the ledger</h2>
-      <label>* Select lot</label>
-      {/* Classic drop-down */}
-      {/* <select
-        value={selectedLot}
-        onChange={(e) => setSelectedLot(e.target.value)}
-      >
-        <option value="">-- Select a lot --</option>
-        {lots.map((lot) => (
-          <option key={lot.id} value={lot.id}>
-            {lot.product_name} - {lot.lot_code} / {lot.expires_on}
-          </option>
-        ))}
-      </select> */}
-      <Select
-        options={lotOptionsForSelect}
-        value={lotOptionsForSelect.find((o) => o.value === selectedLot) || null}
-        onChange={(opt) => setSelectedLot(opt?.value || "")}
-      />
-      <label>* Customer name</label>
-      <input
-        type="text"
-        value={customer}
-        onChange={(e) => setCustomer(e.target.value)}
-        placeholder="Customer name"
-      />
-      <label>* Selling price</label>
-      <input
-        type="number"
-        value={sellingPrice}
-        onChange={(e) => setSellingPrice(Number(e.target.value))}
-        placeholder="Selling price"
-      />
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Recording..." : "Record sale"}
-      </button>
-      <hr />
-      <h2 className="full-width">🍪 Cookie trail</h2>
-      <table className="full-width">
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Product</th>
-            <th>Sold vs Exp</th>
-          </tr>
-        </thead>
-        {saleLot.map((sale) => (
-          <tr>
-            <td>{sale.customer}</td>
-            <td>{sale.product_name}</td>
-            <td className="kicker">
-              {sale.sold_on} / {sale.expires_on}
-            </td>
-          </tr>
-        ))}
-      </table>
-      <button
-        onClick={() => {
-          fetchTodayTotal();
-          setShowTotals(!showTotals);
-        }}
-      >
-        {showTotals ? "Hide totals" : "Show totals"}
-      </button>
+    <Container maxW="480px" w="full" px={0}>
+      <Fieldset.Root>
+        <Stack>
+          <Fieldset.Legend />
+          <Fieldset.HelperText>Add crumbs to the ledger</Fieldset.HelperText>
+        </Stack>
+        <Fieldset.Content>
+          <Field.Root required orientation="horizontal">
+            <Field.Label>
+              Lot
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Select.Root
+              collection={unsoldLotsCollection}
+              variant="subtle"
+              onValueChange={(e) => {
+                const selectedLotId = e.value?.[0] ?? null;
+                console.log("Selected value: ", selectedLotId);
+                setSelectedLot(selectedLotId);
+              }}
+            >
+              <Select.HiddenSelect />
+              <Select.Control>
+                <Select.Trigger>
+                  <Select.ValueText placeholder="Select a lot" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                  <Select.Indicator />
+                </Select.IndicatorGroup>
+              </Select.Control>
+              <Portal>
+                <Select.Positioner>
+                  <Select.Content>
+                    {unsoldLotsCollection.items.map((unsoldLot) => (
+                      <Select.Item item={unsoldLot} key={unsoldLot.id}>
+                        <VStack>
+                          {unsoldLot.product_name}
+                          <Tag.Root
+                            mt="auto"
+                            w="auto"
+                            alignSelf="flex-start"
+                            colorPalette="red"
+                            position="absolute"
+                            top={5}
+                            variant="subtle"
+                            right={9}
+                          >
+                            <Tag.Label>{unsoldLot.expires_on}</Tag.Label>
+                          </Tag.Root>
+                          <Tag.Root
+                            mt="auto"
+                            w="auto"
+                            alignSelf="flex-start"
+                            colorPalette="gray"
+                          >
+                            <Tag.Label>{unsoldLot.lot_code}</Tag.Label>
+                          </Tag.Root>
+                        </VStack>
+                        <Select.ItemIndicator />
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Positioner>
+              </Portal>
+            </Select.Root>
+          </Field.Root>
+          <HStack spacing={4}>
+            <Field.Root required orientation="horizontal">
+              <Field.Label>
+                Customer
+                <Field.RequiredIndicator />
+              </Field.Label>
+              <Input
+                placeholder="Customer name"
+                variant="subtle"
+                value={customer}
+                onChange={(e) => setCustomer(e.target.value)}
+              />
+            </Field.Root>
+            <Field.Root required orientation="horizontal">
+              <Field.Label>
+                Amount
+                <Field.RequiredIndicator />
+              </Field.Label>
+              <NumberInput.Root
+                w="stretch"
+                variant="subtle"
+                value={
+                  Number.isFinite(sellingPrice) ? String(sellingPrice) : ""
+                }
+                onValueChange={(e) => {
+                  setSellingPrice(
+                    Number.isNaN(e.valueAsNumber) ? 0 : e.valueAsNumber
+                  );
+                }}
+              >
+                <NumberInput.Control />
+                <NumberInput.Input />
+              </NumberInput.Root>
+            </Field.Root>
+          </HStack>
+          <Button onClick={handleSubmit} loading={loading} disabled={loading}>
+            Record sale
+          </Button>
+        </Fieldset.Content>
+      </Fieldset.Root>
 
-      {showTotals && (
-        <span className="full-width kicker">Today's total: {todayTotal}</span>
-      )}
-    </div>
+      <Fieldset.Root mt={8}>
+        <Stack>
+          <Fieldset.Legend>Sale made so far</Fieldset.Legend>
+          <Fieldset.HelperText>Happy customers list</Fieldset.HelperText>
+        </Stack>
+
+        <Table.Root size="sm" striped>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Customer</Table.ColumnHeader>
+              <Table.ColumnHeader>Product</Table.ColumnHeader>
+              <Table.ColumnHeader>Sold</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {saleLot.map((item) => (
+              <Table.Row key={item.id}>
+                <Table.Cell>{item.customer}</Table.Cell>
+                <Table.Cell>{item.product_name}</Table.Cell>
+                <Table.Cell>{item.sold_on}</Table.Cell>
+                <Table.Cell textAlign="end">{item.expires_on}</Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Fieldset.Root>
+    </Container>
   );
 }

@@ -159,7 +159,7 @@ export default function AddLot({
         <Fieldset.Content>
           <Field.Root required orientation="horizontal">
             <Field.Label>
-              Product name
+              Product
               <Field.RequiredIndicator />
             </Field.Label>
             <Input
@@ -171,7 +171,7 @@ export default function AddLot({
           </Field.Root>
           <Field.Root required orientation="horizontal">
             <Field.Label>
-              Manufactured on
+              Made on
               <Field.RequiredIndicator />
             </Field.Label>
             <Input
@@ -184,7 +184,7 @@ export default function AddLot({
           </Field.Root>
           <Accordion.Root
             collapsible
-            defaultValue="available_ingredients"
+            defaultValue={["available_ingredients"]}
             w="full"
           >
             <Accordion.Item value="available_ingredients">
