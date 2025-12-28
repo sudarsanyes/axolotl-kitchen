@@ -2,7 +2,15 @@ import { useState } from "react";
 import AddIngredient from "./AddIngredient";
 import AddLot from "./AddLot";
 import SellLot from "./SellLot";
-import { Image, Container, Box, Heading, Tabs, HStack } from "@chakra-ui/react";
+import {
+  Image,
+  Container,
+  Box,
+  Heading,
+  Tabs,
+  HStack,
+  VStack,
+} from "@chakra-ui/react";
 import logo from "../assets/logo.png";
 
 export default function InventoryPage() {
@@ -11,14 +19,42 @@ export default function InventoryPage() {
   return (
     <Box minH="100dvh" p={4}>
       <Container maxW="480px" w="full" px={0}>
-        <HStack justify="space-between" w="full">
-          <Heading size="2xl">Thea's Cookies & Cakes</Heading>
+        <HStack
+          justify="space-between"
+          align="center"
+          w="full"
+          // Optional padding/border if this is a header bar
+          // py={4}
+        >
+          {/* Left: stacked title */}
+          <VStack align="start" lineHeight="1">
+            <Heading
+              as="h1"
+              fontSize={{ base: "xs", md: "sm", lg: "md" }}
+              fontFamily='"bebas-neue", system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif'
+              letterSpacing="0.02em"
+            >
+              Thea's
+            </Heading>
+            <Heading
+              as="div"
+              fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
+              fontFamily='"krul", serif'
+              letterSpacing="wide" /* or "0.02em" if you prefer */
+              mt={{ base: 1, md: 1 }}
+            >
+              Cookies and Cakes
+            </Heading>
+          </VStack>
+
+          {/* Right: logo, vertically centered by the HStack's align="center" */}
           <Image
             src={logo}
             alt="Thea's Cookies & Cakes Logo"
-            boxSize="92px"
+            boxSize={{ base: "72px", md: "84px", lg: "92px" }}
             borderRadius="full"
             objectFit="cover"
+            flexShrink={0}
           />
         </HStack>
 
