@@ -1,82 +1,48 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import AddIngredient from "./AddIngredient";
 import AddLot from "./AddLot";
 import SellLot from "./SellLot";
-
-interface Tab {
-  id: "stockpile" | "lot" | "sell";
-  label: string;
-}
-
-const tabs: Tab[] = [
-  { id: "stockpile", label: "Stockpile" },
-  { id: "lot", label: "Register Lot" },
-  { id: "sell", label: "Make a sale" },
-];
+import {
+  Container,
+  Box,
+  Heading,
+  Tabs,
+  AbsoluteCenter,
+} from "@chakra-ui/react";
 
 export default function InventoryPage() {
-  // versions for downstream components to refetch or re-render on change
-  const [ingredientsVersion, setIngredientsVersion] = useState(0);
   const [lotsVersion, setLotsVersion] = useState(0);
-  const [selectedTab, setSelectedTab] = useState<Tab>(tabs[0]); // default Stockpile
-
-  // Choose the active panel once (memo not strictly needed here, but fine)
-  const ActivePanel = useMemo(() => {
-    switch (selectedTab.id) {
-      case "stockpile":
-        return (
-          <AddIngredient
-            onIngredientAdded={() => setIngredientsVersion((v) => v + 1)}
-          />
-        );
-      case "lot":
-        return (
-          <AddLot
-            ingredientsVersion={ingredientsVersion}
-            onLotCreated={() => setLotsVersion((v) => v + 1)}
-          />
-        );
-      case "sell":
-        return <SellLot lotsVersion={lotsVersion} />;
-      default:
-        return null;
-    }
-  }, [selectedTab.id, ingredientsVersion, lotsVersion]);
-
+  const [ingredientsVersion, setIngredientsVersion] = useState(0);
   return (
-    <div>
-      {/* Tab buttons */}
-
-      <div role="tablist" aria-label="Inventory tabs" className="tab-list">
-        {tabs.map((tab) => {
-          const selected = tab.id === selectedTab.id;
-          return (
-            <button
-              className={`tab-item ${selected ? "tab-item--active" : ""}`}
-              key={tab.id}
-              id={`tab-btn-${tab.id}`}
-              onClick={() => setSelectedTab(tab)}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Active panel only */}
-      <div
-        id={`tab-panel-${selectedTab.id}`}
-        role="tabpanel"
-        aria-labelledby={`tab-btn-${selectedTab.id}`}
-        className="tabpanel"
-        style={{ paddingTop: 8 }}
-      >
-        {ActivePanel}
-      </div>
-
-      <span className="kicker full-width">
-        debug data version: {lotsVersion}
-      </span>
-    </div>
+    <Box p={4} width="480px">
+      <AbsoluteCenter axis="horizontal">
+        <Container fluid>
+          <Heading size="2xl" px={4}>
+            Thea's Cookies & Cakes
+          </Heading>
+          <Tabs.Root defaultValue="stockpile">
+            <Tabs.List>
+              <Tabs.Trigger value="stockpile">Stockpile</Tabs.Trigger>
+              <Tabs.Trigger value="create_lot">Create lot</Tabs.Trigger>
+              <Tabs.Trigger value="register_sale">Register sale</Tabs.Trigger>
+            </Tabs.List>
+            <Tabs.Content value="stockpile">
+              <AddIngredient
+                onIngredientAdded={() => setIngredientsVersion((v) => v + 1)}
+              />
+            </Tabs.Content>
+            <Tabs.Content value="create_lot">
+              <AddLot
+                ingredientsVersion={ingredientsVersion}
+                onLotCreated={() => setLotsVersion((v) => v + 1)}
+              />
+            </Tabs.Content>
+            <Tabs.Content value="register_sale">
+              <SellLot lotsVersion={lotsVersion} />;
+            </Tabs.Content>
+          </Tabs.Root>
+        </Container>
+      </AbsoluteCenter>
+    </Box>
   );
 }

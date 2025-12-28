@@ -1,5 +1,16 @@
 import { useState } from "react";
 import { supabase } from "../supabaseClient";
+import {
+  Button,
+  Container,
+  Field,
+  Fieldset,
+  Grid,
+  Input,
+  NumberInput,
+  Stack,
+  Textarea,
+} from "@chakra-ui/react";
 
 interface AddIngredientProps {
   onIngredientAdded: () => void;
@@ -22,7 +33,6 @@ export default function AddIngredient({
       alert("⚠️ Please fill in the required fields");
       return;
     }
-
     setLoading(true);
     try {
       const { error } = await supabase.from("ingredients").insert({
@@ -55,67 +65,181 @@ export default function AddIngredient({
   };
 
   return (
-    <div className="form-grid">
-      <h2 className="full-width">🛒 Stock up the cookie pantry</h2>
+    <Container>
+      <Fieldset.Root size="lg" maxW="md">
+        <Stack>
+          <Fieldset.Legend />
+          <Fieldset.HelperText>
+            Stockup the cookie pantry by recording ingredients you purchase
+          </Fieldset.HelperText>
+        </Stack>
 
-      <label>* Name</label>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Ingredient name"
-      />
+        <Fieldset.Content>
+          <Field.Root required orientation="horizontal">
+            <Field.Label>
+              Name
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Input
+              placeholder="Ingredient name"
+              variant="subtle"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Field.Root>
+          <Field.Root orientation="horizontal">
+            <Field.Label>
+              Brand
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Input
+              placeholder="Which brand?"
+              variant="subtle"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+            />
+          </Field.Root>
+          <Field.Root orientation="horizontal">
+            <Field.Label>
+              Supplier
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Input
+              placeholder="Which shop?"
+              variant="subtle"
+              value={supplier}
+              onChange={(e) => setSupplier(e.target.value)}
+            />
+          </Field.Root>
+          <Stack direction="row">
+            <Field.Root required orientation="horizontal">
+              <Field.Label>
+                LOT
+                <Field.RequiredIndicator />
+              </Field.Label>
+              <Input
+                placeholder="LOT number"
+                variant="subtle"
+                value={lot}
+                onChange={(e) => setLot(e.target.value)}
+              />
+            </Field.Root>
+            <Field.Root required orientation="horizontal">
+              <Field.Label>
+                Expiry
+                <Field.RequiredIndicator />
+              </Field.Label>
+              <Input
+                type="date"
+                variant="subtle"
+                value={expiresOn}
+                onChange={(e) => setExpiresOn(e.target.value)}
+              />
+            </Field.Root>
+          </Stack>
+          <Field.Root orientation="horizontal" w="46%">
+            <Field.Label>
+              MRP
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <NumberInput.Root
+              w="stretch"
+              variant="subtle"
+              value={Number.isFinite(mrp) ? String(mrp) : ""}
+              onValueChange={(e) => {
+                setMrp(Number.isNaN(e.valueAsNumber) ? 0 : e.valueAsNumber);
+              }}
+            >
+              <NumberInput.Control />
+              <NumberInput.Input />
+            </NumberInput.Root>
+          </Field.Root>
+          <Field.Root orientation="vertical">
+            <Field.Label>
+              Notes
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Textarea
+              placeholder="Some notes about the ingredient"
+              variant="outline"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </Field.Root>
+          <Button
+            type="submit"
+            variant="solid"
+            onClick={handleSubmit}
+            disabled={loading}
+            loading={loading}
+          >
+            Add ingredient
+          </Button>
+        </Fieldset.Content>
+      </Fieldset.Root>
+    </Container>
 
-      <label>Brand</label>
-      <input
-        type="text"
-        value={brand}
-        onChange={(e) => setBrand(e.target.value)}
-        placeholder="What brand is it?"
-      />
+    // <div>
+    //   <h2>🛒 Stock up the cookie pantry</h2>
 
-      <label>Supplier</label>
-      <input
-        type="text"
-        value={supplier}
-        onChange={(e) => setSupplier(e.target.value)}
-        placeholder="Where did you get it from?"
-      />
+    //   <label>* Name</label>
+    //   <input
+    //     type="text"
+    //     value={name}
+    //     onChange={(e) => setName(e.target.value)}
+    //     placeholder="Ingredient name"
+    //   />
 
-      <label>* LOT</label>
-      <input
-        type="text"
-        value={lot}
-        onChange={(e) => setLot(e.target.value)}
-        placeholder="LOT number"
-      />
+    //   <label>Brand</label>
+    //   <input
+    //     type="text"
+    //     value={brand}
+    //     onChange={(e) => setBrand(e.target.value)}
+    //     placeholder="What brand is it?"
+    //   />
 
-      <label>Notes</label>
-      <input
-        type="text"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        placeholder="Any notes?"
-      />
+    //   <label>Supplier</label>
+    //   <input
+    //     type="text"
+    //     value={supplier}
+    //     onChange={(e) => setSupplier(e.target.value)}
+    //     placeholder="Where did you get it from?"
+    //   />
 
-      <label>MRP</label>
-      <input
-        type="number"
-        value={mrp}
-        onChange={(e) => setMrp(Number(e.target.value))}
-        placeholder="MRP"
-      />
+    //   <label>* LOT</label>
+    //   <input
+    //     type="text"
+    //     value={lot}
+    //     onChange={(e) => setLot(e.target.value)}
+    //     placeholder="LOT number"
+    //   />
 
-      <label>* Expiry Date</label>
-      <input
-        type="date"
-        value={expiresOn}
-        onChange={(e) => setExpiresOn(e.target.value)}
-      />
+    //   <label>Notes</label>
+    //   <input
+    //     type="text"
+    //     value={notes}
+    //     onChange={(e) => setNotes(e.target.value)}
+    //     placeholder="Any notes?"
+    //   />
 
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Adding..." : "Add ingredient"}
-      </button>
-    </div>
+    //   <label>MRP</label>
+    //   <input
+    //     type="number"
+    //     value={mrp}
+    //     onChange={(e) => setMrp(Number(e.target.value))}
+    //     placeholder="MRP"
+    //   />
+
+    //   <label>* Expiry Date</label>
+    //   <input
+    //     type="date"
+    //     value={expiresOn}
+    //     onChange={(e) => setExpiresOn(e.target.value)}
+    //   />
+
+    //   <button onClick={handleSubmit} disabled={loading}>
+    //     {loading ? "Adding..." : "Add ingredient"}
+    //   </button>
+    // </div>
   );
 }
