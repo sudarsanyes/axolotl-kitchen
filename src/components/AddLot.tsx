@@ -13,6 +13,7 @@ import {
   Stack,
   Tag,
 } from "@chakra-ui/react";
+import { toaster } from "./ui/toaster";
 
 interface AddLotProps {
   ingredientsVersion: number;
@@ -81,9 +82,11 @@ export default function AddLot({
 
   const handleSubmit = async () => {
     if (!productName || selectedIngredients.length === 0) {
-      alert(
-        "⚠️ Please enter a product name and select at least one ingredient."
-      );
+      toaster.create({
+        description:
+          "Please enter a product name and select at least one ingredient",
+        type: "info",
+      });
       return;
     }
 
@@ -128,14 +131,19 @@ export default function AddLot({
 
       if (linkError) throw linkError;
 
-      alert("✅ Lot created successfully");
-
+      toaster.create({
+        description: "Lot created successfully",
+        type: "success",
+      });
       // Reset form
       setProductName("");
       setSelectedIngredients([]);
     } catch (err) {
       console.error(err);
-      alert("🛑 Something went wrong while creating the lot!");
+      toaster.create({
+        description: "Something went wrong while creating the lot!",
+        type: "error",
+      });
     } finally {
       setLoading(false);
       onLotCreated();
@@ -269,6 +277,7 @@ export default function AddLot({
                             w="auto"
                             alignSelf="flex-start"
                             colorPalette="purple"
+                            variant="solid"
                           >
                             <Tag.Label>{ingredient.expires_on}</Tag.Label>
                           </Tag.Root>

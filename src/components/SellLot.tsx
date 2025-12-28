@@ -16,6 +16,7 @@ import {
   Tag,
   VStack,
 } from "@chakra-ui/react";
+import { toaster } from "./ui/toaster";
 
 interface SellLotProps {
   lotsVersion: number;
@@ -87,7 +88,10 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
 
   const handleSubmit = async () => {
     if (!selectedLot && !customer) {
-      alert("⚠️ Please select a lot and enter a customer name");
+      toaster.create({
+        description: "Please select a lot and enter a customer name",
+        type: "info",
+      });
       return;
     }
 
@@ -107,7 +111,10 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
 
       if (error) throw error;
 
-      alert("✅ Sale recorded successfully");
+      toaster.create({
+        description: "Sale recorded successfully",
+        type: "success",
+      });
 
       // Reset form
       setSelectedLot("");
@@ -123,7 +130,10 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
       setUnsoldLots(data || []);
     } catch (err) {
       console.error(err);
-      alert("🛑 Something went wrong while recording the sale!");
+      toaster.create({
+        description: "Something went wrong while recording the sale!",
+        type: "error",
+      });
     } finally {
       setLoading(false);
       fetchSaleLots();
@@ -210,7 +220,7 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
                 onChange={(e) => setCustomer(e.target.value)}
               />
             </Field.Root>
-            <Field.Root required orientation="horizontal">
+            <Field.Root orientation="horizontal">
               <Field.Label>
                 Amount
                 <Field.RequiredIndicator />
@@ -258,8 +268,26 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
               <Table.Row key={item.id}>
                 <Table.Cell>{item.customer}</Table.Cell>
                 <Table.Cell>{item.product_name}</Table.Cell>
-                <Table.Cell>{item.sold_on}</Table.Cell>
-                <Table.Cell textAlign="end">{item.expires_on}</Table.Cell>
+                <Table.Cell>
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="blue"
+                  >
+                    <Tag.Label>{item.sold_on}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
+                <Table.Cell textAlign="end">
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="red"
+                  >
+                    <Tag.Label>{item.expires_on}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>

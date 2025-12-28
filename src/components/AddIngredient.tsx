@@ -11,6 +11,8 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 
+import { toaster } from "./ui/toaster";
+
 interface AddIngredientProps {
   onIngredientAdded: () => void;
 }
@@ -31,7 +33,10 @@ export default function AddIngredient({
 
   const handleSubmit = async () => {
     if (!name || !lot || !expiresOn) {
-      alert("⚠️ Please fill in the required fields");
+      toaster.create({
+        description: "Please fill in the required fields",
+        type: "info",
+      });
       return;
     }
     setLoading(true);
@@ -48,7 +53,10 @@ export default function AddIngredient({
 
       if (error) throw error;
 
-      alert("✅ Ingredient added successfully");
+      toaster.create({
+        description: "Ingredient added successfully",
+        type: "success",
+      });
       setName("");
       setBrand("");
       setSupplier("");

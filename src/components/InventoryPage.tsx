@@ -2,7 +2,8 @@ import { useState } from "react";
 import AddIngredient from "./AddIngredient";
 import AddLot from "./AddLot";
 import SellLot from "./SellLot";
-import { Container, Box, Heading, Tabs } from "@chakra-ui/react";
+import { Image, Container, Box, Heading, Tabs, HStack } from "@chakra-ui/react";
+import logo from "../assets/logo.png";
 
 export default function InventoryPage() {
   const [lotsVersion, setLotsVersion] = useState(0);
@@ -10,9 +11,17 @@ export default function InventoryPage() {
   return (
     <Box minH="100dvh" p={4}>
       <Container maxW="480px" w="full" px={0}>
-        <Heading size="2xl" px={4}>
-          Thea's Cookies & Cakes
-        </Heading>
+        <HStack justify="space-between" w="full">
+          <Heading size="2xl">Thea's Cookies & Cakes</Heading>
+          <Image
+            src={logo}
+            alt="Thea's Cookies & Cakes Logo"
+            boxSize="92px"
+            borderRadius="full"
+            objectFit="cover"
+          />
+        </HStack>
+
         <Tabs.Root defaultValue="stockpile">
           <Tabs.List>
             <Tabs.Trigger value="stockpile">Stockpile</Tabs.Trigger>
