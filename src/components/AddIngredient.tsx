@@ -66,7 +66,10 @@ export default function AddIngredient({
       setExpiresOn("");
     } catch (err) {
       console.error(err);
-      alert("🛑 Something went wrong while adding the ingredient");
+      toaster.create({
+        description: "Something went wrong while adding the ingredient!",
+        type: "info",
+      });
     } finally {
       setLoading(false);
       onIngredientAdded();
