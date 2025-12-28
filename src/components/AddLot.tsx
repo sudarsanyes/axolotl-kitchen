@@ -8,14 +8,10 @@ import {
   Field,
   Fieldset,
   Grid,
-  HStack,
   Input,
-  NumberInput,
   Span,
   Stack,
   Tag,
-  Textarea,
-  VStack,
 } from "@chakra-ui/react";
 
 interface AddLotProps {

@@ -45,9 +45,6 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
   const [sellingPrice, setSellingPrice] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const [todayTotal, setTodayTotal] = useState(0);
-  const [showTotals, setShowTotals] = useState(false);
-
   const unsoldLotsCollection = createListCollection<ProductLot>({
     items: unsoldLots,
     itemToString: (lot) => lot.product_name,
@@ -80,14 +77,6 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
     }
 
     setSaleLot(data || []);
-  };
-
-  const fetchTodayTotal = async () => {
-    const { data, error } = await supabase.rpc("today_sales_total");
-
-    if (!error) {
-      setTodayTotal(data);
-    }
   };
 
   // Fetch unsold lots from the view
@@ -138,7 +127,6 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
     } finally {
       setLoading(false);
       fetchSaleLots();
-      setShowTotals(false);
     }
   };
 
@@ -209,7 +197,7 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
               </Portal>
             </Select.Root>
           </Field.Root>
-          <HStack spacing={4}>
+          <HStack>
             <Field.Root required orientation="horizontal">
               <Field.Label>
                 Customer

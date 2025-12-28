@@ -2,13 +2,7 @@ import { useState } from "react";
 import AddIngredient from "./AddIngredient";
 import AddLot from "./AddLot";
 import SellLot from "./SellLot";
-import {
-  Container,
-  Box,
-  Heading,
-  Tabs,
-  AbsoluteCenter,
-} from "@chakra-ui/react";
+import { Container, Box, Heading, Tabs } from "@chakra-ui/react";
 
 export default function InventoryPage() {
   const [lotsVersion, setLotsVersion] = useState(0);
