@@ -1,10 +1,12 @@
 # Build
+```
 npm install
 npm run dev
 npm run build
+```
 
 # DB Stuff
-supabase
+https://supabase.com/dashboard/project/syphxzwnaugskucnnsve
 
 # FE Stuff
 Chakra UI
