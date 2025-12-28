@@ -8,7 +8,7 @@ import { ColorModeProvider } from "./components/ui/color-mode.tsx";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ChakraProvider value={defaultSystem}>
-      <ColorModeProvider useColorMode="dark">
+      <ColorModeProvider>
         <App />
       </ColorModeProvider>
     </ChakraProvider>

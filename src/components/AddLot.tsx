@@ -1,5 +1,22 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import {
+  Accordion,
+  Button,
+  CheckboxCard,
+  Container,
+  Field,
+  Fieldset,
+  Grid,
+  HStack,
+  Input,
+  NumberInput,
+  Span,
+  Stack,
+  Tag,
+  Textarea,
+  VStack,
+} from "@chakra-ui/react";
 
 interface AddLotProps {
   ingredientsVersion: number;
@@ -20,7 +37,6 @@ export default function AddLot({
   const [unavailableIngredients, setUnavailableIngredients] = useState<
     Ingredient[]
   >([]);
-  const [showUnavailable, setShowUnavailable] = useState(false);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [productName, setProductName] = useState("");
@@ -131,71 +147,148 @@ export default function AddLot({
   };
 
   return (
-    <div className="form-grid">
-      <h2 className="full-width">📦 Add a fresh cookie batch</h2>
+    <Container maxW="480px" w="full" px={0}>
+      <Fieldset.Root>
+        <Stack>
+          <Fieldset.Legend />
+          <Fieldset.HelperText>
+            Product and document details for the new lot
+          </Fieldset.HelperText>
+        </Stack>
 
-      <label>* Product name</label>
+        <Fieldset.Content>
+          <Field.Root required orientation="horizontal">
+            <Field.Label>
+              Product name
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Input
+              placeholder="Product name"
+              variant="subtle"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+            />
+          </Field.Root>
+          <Field.Root required orientation="horizontal">
+            <Field.Label>
+              Manufactured on
+              <Field.RequiredIndicator />
+            </Field.Label>
+            <Input
+              placeholder="Manufactured on"
+              type="date"
+              variant="subtle"
+              value={manufacturedOn}
+              onChange={(e) => setManufacturedOn(e.target.value)}
+            />
+          </Field.Root>
+          <Accordion.Root
+            collapsible
+            defaultValue="available_ingredients"
+            w="full"
+          >
+            <Accordion.Item value="available_ingredients">
+              <Accordion.ItemTrigger
+                display="flex"
+                alignItems="center"
+                w="full"
+                px={2}
+              >
+                <Span>Available ingredients</Span>
+                <Accordion.ItemIndicator ml="auto" />
+              </Accordion.ItemTrigger>
 
-      <input
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-        placeholder="Cookies? Sables noel?"
-      />
+              <Accordion.ItemContent>
+                <Accordion.ItemBody>
+                  <Grid templateColumns="repeat(2, 1fr)" gap="1">
+                    {ingredients.map((ingredient) => (
+                      <CheckboxCard.Root
+                        variant="outline"
+                        onChange={() => toggleIngredient(ingredient.id)}
+                      >
+                        <CheckboxCard.HiddenInput />
+                        <CheckboxCard.Control
+                          position="relative"
+                          display="flex"
+                          flexDirection="column"
+                          h="full"
+                        >
+                          <CheckboxCard.Indicator
+                            position="absolute"
+                            top={5}
+                            right={3}
+                          />
+                          <CheckboxCard.Label mr={4}>
+                            {ingredient.name}
+                          </CheckboxCard.Label>
+                          <Tag.Root
+                            mt="auto"
+                            w="auto"
+                            alignSelf="flex-start"
+                            colorPalette="red"
+                          >
+                            <Tag.Label>{ingredient.expires_on}</Tag.Label>
+                          </Tag.Root>
+                        </CheckboxCard.Control>
+                      </CheckboxCard.Root>
+                    ))}
+                  </Grid>
+                </Accordion.ItemBody>
+              </Accordion.ItemContent>
+            </Accordion.Item>
 
-      <label>Manufactured on </label>
-      <input
-        type="date"
-        value={manufacturedOn}
-        onChange={(e) => setManufacturedOn(e.target.value)}
-      />
+            <Accordion.Item value="unavailable_ingredients">
+              <Accordion.ItemTrigger
+                display="flex"
+                alignItems="center"
+                w="full"
+                px={2}
+              >
+                <Span>Unavailable ingredients</Span>
+                <Accordion.ItemIndicator ml="auto" />
+              </Accordion.ItemTrigger>
 
-      <h3 className="full-width">* Ingredients (Available)</h3>
-      {ingredients.map((i) => (
-        <label key={i.id}>
-          <input
-            type="checkbox"
-            checked={selectedIngredients.includes(i.id)}
-            onChange={() => toggleIngredient(i.id)}
-          />
-          {i.name}
-          <span className="kicker">
-            {i.brand} / {i.expires_on}
-          </span>
-        </label>
-      ))}
-
-      {/* <h4 className="full-width">Ingredients (Unavailable)</h4>
-      {unavailableIngredients.map((i) => (
-        <label key={i.id}>
-          {" "}
-          {i.name} / {i.expires_on}{" "}
-        </label>
-      ))} */}
-
-      <h4
-        className="full-width expander-header"
-        onClick={() => setShowUnavailable(!showUnavailable)}
-      >
-        Ingredients (Unavailable)
-        <span className="chevron kicker interactive">
-          {showUnavailable ? "Hide" : "Show"}
-        </span>
-      </h4>
-
-      {/* Expander Content */}
-      {showUnavailable && (
-        <div className="expander-content">
-          {unavailableIngredients.map((i) => (
-            <label key={i.id} className="kicker unavailable-ingredient">
-              {i.name} / {i.expires_on}
-            </label>
-          ))}
-        </div>
-      )}
-
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Creating…" : "Create lot"}
-      </button>
-    </div>
+              <Accordion.ItemContent>
+                <Accordion.ItemBody>
+                  <Grid templateColumns="repeat(2, 1fr)" gap="3">
+                    {unavailableIngredients.map((ingredient) => (
+                      <CheckboxCard.Root size="sm" disabled>
+                        <CheckboxCard.HiddenInput />
+                        <CheckboxCard.Control
+                          position="relative"
+                          display="flex"
+                          flexDirection="column"
+                          h="full"
+                        >
+                          <CheckboxCard.Indicator
+                            position="absolute"
+                            top={5}
+                            right={3}
+                          />
+                          <CheckboxCard.Label mr={4}>
+                            {ingredient.name}
+                          </CheckboxCard.Label>
+                          <Tag.Root
+                            mt="auto"
+                            w="auto"
+                            alignSelf="flex-start"
+                            colorPalette="purple"
+                          >
+                            <Tag.Label>{ingredient.expires_on}</Tag.Label>
+                          </Tag.Root>
+                        </CheckboxCard.Control>
+                      </CheckboxCard.Root>
+                    ))}
+                  </Grid>
+                </Accordion.ItemBody>
+              </Accordion.ItemContent>
+            </Accordion.Item>
+          </Accordion.Root>
+          <Button onClick={handleSubmit} loading={loading} disabled={loading}>
+            Save lot
+          </Button>
+        </Fieldset.Content>
+      </Fieldset.Root>
+    </Container>
   );
 }

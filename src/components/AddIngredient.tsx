@@ -5,7 +5,6 @@ import {
   Container,
   Field,
   Fieldset,
-  Grid,
   Input,
   NumberInput,
   Stack,
@@ -25,7 +24,9 @@ export default function AddIngredient({
   const [lot, setLot] = useState("");
   const [notes, setNotes] = useState("");
   const [mrp, setMrp] = useState(0);
-  const [expiresOn, setExpiresOn] = useState("");
+  const [expiresOn, setExpiresOn] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -65,8 +66,8 @@ export default function AddIngredient({
   };
 
   return (
-    <Container>
-      <Fieldset.Root size="lg" maxW="md">
+    <Container maxW="480px" w="full" px={0}>
+      <Fieldset.Root>
         <Stack>
           <Fieldset.Legend />
           <Fieldset.HelperText>
@@ -137,7 +138,7 @@ export default function AddIngredient({
               />
             </Field.Root>
           </Stack>
-          <Field.Root orientation="horizontal" w="46%">
+          <Field.Root orientation="horizontal" w="49%">
             <Field.Label>
               MRP
               <Field.RequiredIndicator />
