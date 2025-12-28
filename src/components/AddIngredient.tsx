@@ -68,7 +68,7 @@ export default function AddIngredient({
       console.error(err);
       toaster.create({
         description: "Something went wrong while adding the ingredient!",
-        type: "info",
+        type: "error",
       });
     } finally {
       setLoading(false);
