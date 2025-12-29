@@ -277,7 +277,6 @@ export default function AddLot({
                             w="auto"
                             alignSelf="flex-start"
                             colorPalette="purple"
-                            variant="solid"
                           >
                             <Tag.Label>{ingredient.expires_on}</Tag.Label>
                           </Tag.Root>

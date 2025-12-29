@@ -31,9 +31,10 @@ export default function InventoryPage() {
           <VStack align="start" lineHeight="1">
             <Heading
               as="h1"
-              fontSize={{ base: "xs", md: "sm", lg: "md" }}
+              fontSize={{ base: "sm", md: "md", lg: "lg" }}
               fontFamily='"bebas-neue", system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif'
               letterSpacing="0.02em"
+              color="#8c008c"
             >
               Thea's
             </Heading>
@@ -42,7 +43,7 @@ export default function InventoryPage() {
               fontSize={{ base: "2xl", md: "3xl", lg: "4xl" }}
               fontFamily='"krul", serif'
               letterSpacing="wide" /* or "0.02em" if you prefer */
-              mt={{ base: 1, md: 1 }}
+              mt={-3}
             >
               Cookies and Cakes
             </Heading>

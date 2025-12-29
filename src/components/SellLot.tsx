@@ -36,6 +36,7 @@ interface SaleLot {
   sold_on: string;
   product_name: string;
   expires_on: string;
+  lot_code: string;
 }
 
 export default function SellLot({ lotsVersion }: SellLotProps) {
@@ -259,6 +260,7 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
             <Table.Row>
               <Table.ColumnHeader>Customer</Table.ColumnHeader>
               <Table.ColumnHeader>Product</Table.ColumnHeader>
+              <Table.ColumnHeader>Lot</Table.ColumnHeader>
               <Table.ColumnHeader>Sold</Table.ColumnHeader>
               <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
             </Table.Row>
@@ -268,6 +270,16 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
               <Table.Row key={item.id}>
                 <Table.Cell>{item.customer}</Table.Cell>
                 <Table.Cell>{item.product_name}</Table.Cell>
+                <Table.Cell>
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="gray"
+                  >
+                    <Tag.Label>{item.lot_code}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
                 <Table.Cell>
                   <Tag.Root
                     mt="auto"
