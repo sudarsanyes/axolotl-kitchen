@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
   Button,
@@ -8,16 +8,27 @@ import {
   Input,
   NumberInput,
   Stack,
+  Table,
+  Tag,
   Textarea,
 } from "@chakra-ui/react";
 
 import { toaster } from "./ui/toaster";
 
+interface Ingredient {
+  id: string;
+  name: string;
+  brand: string;
+  expires_on: string;
+}
+
 interface AddIngredientProps {
+  ingredientsVersion: number;
   onIngredientAdded: () => void;
 }
 
 export default function AddIngredient({
+  ingredientsVersion,
   onIngredientAdded,
 }: AddIngredientProps) {
   const [name, setName] = useState("");
@@ -30,6 +41,36 @@ export default function AddIngredient({
     new Date().toISOString().slice(0, 10)
   );
   const [loading, setLoading] = useState(false);
+  const [unavailableIngredients, setUnavailableIngredients] = useState<
+    Ingredient[]
+  >([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+
+  const fetchIngredients = async () => {
+    const { data, error } = await supabase
+      .from("available_ingredients")
+      .select("id, name, brand, expires_on")
+      .order("name");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setIngredients(data);
+  };
+
+  const fetchUnavailableIngredients = async () => {
+    const { data, error } = await supabase
+      .from("unavailable_ingredients")
+      .select("id, name, brand, expires_on")
+      .order("name");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    setUnavailableIngredients(data);
+  };
 
   const handleSubmit = async () => {
     if (!name || !lot || !expiresOn) {
@@ -75,6 +116,12 @@ export default function AddIngredient({
       onIngredientAdded();
     }
   };
+
+  // Fetch ingredients
+  useEffect(() => {
+    fetchIngredients();
+    fetchUnavailableIngredients();
+  }, [ingredientsVersion]);
 
   return (
     <Container maxW="480px" w="full" px={0}>
@@ -189,69 +236,76 @@ export default function AddIngredient({
           </Button>
         </Fieldset.Content>
       </Fieldset.Root>
+
+      <Fieldset.Root mt={8}>
+        <Stack>
+          <Fieldset.Legend>Pantry</Fieldset.Legend>
+          <Fieldset.HelperText>Ingredients in the pantry</Fieldset.HelperText>
+        </Stack>
+
+        <Table.Root size="sm" striped>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
+              <Table.ColumnHeader>Brand</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {ingredients.map((ingredient) => (
+              <Table.Row key={ingredient.id}>
+                <Table.Cell>{ingredient.name}</Table.Cell>
+                <Table.Cell>{ingredient.brand}</Table.Cell>
+                <Table.Cell textAlign="end">
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="red"
+                  >
+                    <Tag.Label>{ingredient.expires_on}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+
+        <Stack>
+          <Fieldset.Legend></Fieldset.Legend>
+          <Fieldset.HelperText>
+            Unavailable ingredients (expired)
+          </Fieldset.HelperText>
+        </Stack>
+
+        <Table.Root size="sm" striped>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
+              <Table.ColumnHeader>Brand</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {unavailableIngredients.map((ingredient) => (
+              <Table.Row key={ingredient.id}>
+                <Table.Cell>{ingredient.name}</Table.Cell>
+                <Table.Cell>{ingredient.brand}</Table.Cell>
+                <Table.Cell textAlign="end">
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="purple"
+                  >
+                    <Tag.Label>{ingredient.expires_on}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Fieldset.Root>
     </Container>
-
-    // <div>
-    //   <h2>🛒 Stock up the cookie pantry</h2>
-
-    //   <label>* Name</label>
-    //   <input
-    //     type="text"
-    //     value={name}
-    //     onChange={(e) => setName(e.target.value)}
-    //     placeholder="Ingredient name"
-    //   />
-
-    //   <label>Brand</label>
-    //   <input
-    //     type="text"
-    //     value={brand}
-    //     onChange={(e) => setBrand(e.target.value)}
-    //     placeholder="What brand is it?"
-    //   />
-
-    //   <label>Supplier</label>
-    //   <input
-    //     type="text"
-    //     value={supplier}
-    //     onChange={(e) => setSupplier(e.target.value)}
-    //     placeholder="Where did you get it from?"
-    //   />
-
-    //   <label>* LOT</label>
-    //   <input
-    //     type="text"
-    //     value={lot}
-    //     onChange={(e) => setLot(e.target.value)}
-    //     placeholder="LOT number"
-    //   />
-
-    //   <label>Notes</label>
-    //   <input
-    //     type="text"
-    //     value={notes}
-    //     onChange={(e) => setNotes(e.target.value)}
-    //     placeholder="Any notes?"
-    //   />
-
-    //   <label>MRP</label>
-    //   <input
-    //     type="number"
-    //     value={mrp}
-    //     onChange={(e) => setMrp(Number(e.target.value))}
-    //     placeholder="MRP"
-    //   />
-
-    //   <label>* Expiry Date</label>
-    //   <input
-    //     type="date"
-    //     value={expiresOn}
-    //     onChange={(e) => setExpiresOn(e.target.value)}
-    //   />
-
-    //   <button onClick={handleSubmit} disabled={loading}>
-    //     {loading ? "Adding..." : "Add ingredient"}
-    //   </button>
-    // </div>
   );
 }

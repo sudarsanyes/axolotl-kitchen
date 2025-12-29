@@ -16,6 +16,7 @@ import logo from "../assets/logo.png";
 export default function InventoryPage() {
   const [lotsVersion, setLotsVersion] = useState(0);
   const [ingredientsVersion, setIngredientsVersion] = useState(0);
+
   return (
     <Box minH="100dvh" p={4}>
       <Container maxW="480px" w="full" px={0}>
@@ -66,6 +67,7 @@ export default function InventoryPage() {
           </Tabs.List>
           <Tabs.Content value="stockpile">
             <AddIngredient
+              ingredientsVersion={ingredientsVersion}
               onIngredientAdded={() => setIngredientsVersion((v) => v + 1)}
             />
           </Tabs.Content>
