@@ -11,6 +11,7 @@ import {
   Input,
   Span,
   Stack,
+  Table,
   Tag,
 } from "@chakra-ui/react";
 import { toaster } from "./ui/toaster";
@@ -18,6 +19,14 @@ import { toaster } from "./ui/toaster";
 interface AddLotProps {
   ingredientsVersion: number;
   onLotCreated: () => void;
+}
+
+interface ProductLot {
+  id: string;
+  lot_code: string;
+  product_name: string;
+  manufactured_on: string;
+  expires_on: string;
 }
 
 interface Ingredient {
@@ -41,6 +50,21 @@ export default function AddLot({
     new Date().toISOString().slice(0, 10)
   );
   const [loading, setLoading] = useState(false);
+  const [lots, setLots] = useState<ProductLot[]>([]);
+
+  const fetchLots = async () => {
+    const { data, error } = await supabase
+      .from("product_lots")
+      .select("*")
+      .order("manufactured_on", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setLots(data || []);
+  };
 
   const fetchIngredients = async () => {
     const { data, error } = await supabase
@@ -72,6 +96,7 @@ export default function AddLot({
   useEffect(() => {
     fetchIngredients();
     fetchUnavailableIngredients();
+    fetchLots();
   }, [ingredientsVersion]);
 
   const toggleIngredient = (id: string) => {
@@ -138,6 +163,7 @@ export default function AddLot({
       // Reset form
       setProductName("");
       setSelectedIngredients([]);
+      fetchLots(); // <------------- check here
     } catch (err) {
       console.error(err);
       toaster.create({
@@ -292,6 +318,48 @@ export default function AddLot({
             Save lot
           </Button>
         </Fieldset.Content>
+
+        <Stack>
+          <Fieldset.Legend>Lots</Fieldset.Legend>
+          <Fieldset.HelperText>Current lot list</Fieldset.HelperText>
+        </Stack>
+
+        <Table.Root size="sm" striped>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeader>Product</Table.ColumnHeader>
+              <Table.ColumnHeader>Lot code</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {lots.map((lot) => (
+              <Table.Row key={lot.id}>
+                <Table.Cell>{lot.product_name}</Table.Cell>
+                <Table.Cell>
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="gray"
+                  >
+                    <Tag.Label>{lot.lot_code}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
+                <Table.Cell textAlign="end">
+                  <Tag.Root
+                    mt="auto"
+                    w="auto"
+                    alignSelf="flex-start"
+                    colorPalette="red"
+                  >
+                    <Tag.Label>{lot.expires_on}</Tag.Label>
+                  </Tag.Root>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
       </Fieldset.Root>
     </Container>
   );
