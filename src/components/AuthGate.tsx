@@ -36,7 +36,12 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async () => {
-    await supabase.auth.signInWithOtp({ email });
+    await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: window.location.origin,
+      },
+    });
     toaster.create({
       description: "Check your email for the login link",
       type: "info",
@@ -55,7 +60,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
               boxSize="150px"
               borderRadius="full"
               fit="cover"
-              alt="Naruto Uzumaki"
+              alt="Access denied"
             />
           </Center>
 
