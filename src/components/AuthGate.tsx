@@ -53,7 +53,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (!session) {
     return (
-      <Box minH="100dvh" p={4}>
+      <Box p={4}>
         <Container maxW="480px" w="full" px={0}>
           <Center maxW="480px">
             <Image
