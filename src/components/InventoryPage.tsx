@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddIngredient from "./AddIngredient";
 import AddLot from "./AddLot";
 import SellLot from "./SellLot";
@@ -12,21 +12,26 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.png";
+import { supabase } from "../supabaseClient";
 
 export default function InventoryPage() {
   const [lotsVersion, setLotsVersion] = useState(0);
   const [ingredientsVersion, setIngredientsVersion] = useState(0);
+  const [authUser, setAuthUser] = useState("No user?!");
+
+  // Fetch ingredients
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setAuthUser(data.user?.email ?? "");
+    };
+    fetchUser();
+  }, []);
 
   return (
     <Box minH="100dvh" p={4}>
       <Container maxW="480px" w="full" px={0}>
-        <HStack
-          justify="space-between"
-          align="center"
-          w="full"
-          // Optional padding/border if this is a header bar
-          // py={4}
-        >
+        <HStack justify="space-between" align="center" w="full">
           {/* Left: stacked title */}
           <VStack align="start" lineHeight="1">
             <Heading
@@ -59,7 +64,6 @@ export default function InventoryPage() {
             flexShrink={0}
           />
         </HStack>
-
         <Tabs.Root defaultValue="stockpile">
           <Tabs.List>
             <Tabs.Trigger value="stockpile">Stockpile</Tabs.Trigger>
@@ -82,6 +86,9 @@ export default function InventoryPage() {
             <SellLot lotsVersion={lotsVersion} />
           </Tabs.Content>
         </Tabs.Root>
+        <Heading size="xs" textAlign="center" w="full" my={10}>
+          {authUser}
+        </Heading>
       </Container>
     </Box>
   );

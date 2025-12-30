@@ -5,8 +5,11 @@ import {
   Container,
   Field,
   Fieldset,
+  HStack,
   Input,
   NumberInput,
+  Popover,
+  Portal,
   Stack,
   Table,
   Tag,
@@ -14,6 +17,7 @@ import {
 } from "@chakra-ui/react";
 
 import { toaster } from "./ui/toaster";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 interface Ingredient {
   id: string;
@@ -45,6 +49,7 @@ export default function AddIngredient({
     Ingredient[]
   >([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [markedIngredient, setMarkedIngredient] = useState<string | null>(null); // stores the id of the ingredient.
 
   const fetchIngredients = async () => {
     const { data, error } = await supabase
@@ -70,6 +75,36 @@ export default function AddIngredient({
       return;
     }
     setUnavailableIngredients(data);
+  };
+
+  const markIngredientOver = async () => {
+    alert("Marked ingredient: " + markedIngredient);
+    if (!markedIngredient) {
+      console.warn("No ingredient selected");
+      return;
+    }
+
+    console.log("Updating ingredient:", markedIngredient);
+
+    const { data, error } = await supabase
+      .from("ingredients")
+      .update({ is_over: true })
+      .eq("id", markedIngredient)
+      .select();
+
+    if (error) {
+      console.log("Error:", data);
+      toaster.create({
+        description: "Failed to mark ingredient as over",
+        type: "error",
+      });
+    } else {
+      console.log("Updated rows:", data);
+      toaster.create({
+        description: "Ingredient marked as over",
+        type: "success",
+      });
+    }
   };
 
   const handleSubmit = async () => {
@@ -249,6 +284,7 @@ export default function AddIngredient({
               <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
               <Table.ColumnHeader>Brand</Table.ColumnHeader>
               <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
+              <Table.ColumnHeader textAlign="end">Clear</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -265,6 +301,48 @@ export default function AddIngredient({
                   >
                     <Tag.Label>{ingredient.expires_on}</Tag.Label>
                   </Tag.Root>
+                </Table.Cell>
+                <Table.Cell textAlign="end">
+                  <Popover.Root size="xs">
+                    <Popover.Trigger asChild>
+                      <Button
+                        size="xs"
+                        variant="surface"
+                        onClick={() => setMarkedIngredient(ingredient.id)}
+                      >
+                        <FaRegTrashAlt />
+                      </Button>
+                    </Popover.Trigger>
+                    <Portal>
+                      <Popover.Positioner>
+                        <Popover.Content width="200px" p={0}>
+                          <Popover.Arrow />
+                          <Popover.Body>
+                            <Popover.Title fontWeight="medium">
+                              Mark {ingredient.name} as over?
+                            </Popover.Title>
+                            <HStack my={3}>
+                              <Button
+                                size="xs"
+                                variant="ghost"
+                                colorPalette="purple"
+                                onClick={markIngredientOver}
+                              >
+                                Yes
+                              </Button>
+                              <Button
+                                size="xs"
+                                variant="outline"
+                                onClick={() => setMarkedIngredient(null)}
+                              >
+                                No, not yet!
+                              </Button>
+                            </HStack>
+                          </Popover.Body>
+                        </Popover.Content>
+                      </Popover.Positioner>
+                    </Portal>
+                  </Popover.Root>
                 </Table.Cell>
               </Table.Row>
             ))}
