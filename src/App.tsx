@@ -1,10 +1,13 @@
+import AuthGate from "./components/AuthGate";
 import InventoryPage from "./components/InventoryPage";
 
 function App() {
   return (
     <div>
       <main>
-        <InventoryPage />
+        <AuthGate>
+          <InventoryPage />
+        </AuthGate>
       </main>
     </div>
   );
