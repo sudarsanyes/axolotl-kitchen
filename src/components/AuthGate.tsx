@@ -67,15 +67,18 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
           <Alert.Root status="info" variant="subtle" my={8}>
             <Alert.Indicator />
             <Alert.Content>
-              <Alert.Title>Loing to continue</Alert.Title>
+              <Alert.Title>Halt! Who goes there?</Alert.Title>
               <Alert.Description>
                 <Fieldset.Root>
                   <Stack>
                     <Fieldset.Legend>
-                      You must authenticate yourself before you can proceed
-                      further
+                      Summon your magical OTP using the email you signed up with
+                      — or the universe will just shrug 😅
                     </Fieldset.Legend>
-                    <Fieldset.HelperText></Fieldset.HelperText>
+                    <Fieldset.HelperText>
+                      OTPs only visit emails on the VIP list. If your inbox is
+                      quieter than a sleeping axolotl, that’s why!
+                    </Fieldset.HelperText>
                   </Stack>
 
                   <Fieldset.Content>
@@ -85,13 +88,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
                         <Field.RequiredIndicator />
                       </Field.Label>
                       <Input
-                        placeholder="Email id for the magic link"
+                        placeholder="Email id for the OTP"
                         variant="subtle"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                       />
                     </Field.Root>
-                    <Button onClick={login}>Send the magic link</Button>
+                    <Button onClick={login}>Request an OTP link</Button>
                   </Fieldset.Content>
                 </Fieldset.Root>
               </Alert.Description>
