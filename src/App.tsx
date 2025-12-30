@@ -1,7 +1,6 @@
 import AuthGate from "./components/AuthGate";
 import InventoryPage from "./components/InventoryPage";
-import { Center, Image } from "@chakra-ui/react";
-import axey from "./assets/axey-eating.png";
+import { Center } from "@chakra-ui/react";
 
 function App() {
   return (
@@ -11,13 +10,13 @@ function App() {
           <InventoryPage />
         </AuthGate>
         <Center maxW="480px">
-          <Image
+          {/* <Image
             src={axey}
             boxSize="32px"
             borderRadius="full"
             fit="cover"
             alt="Axey eating"
-          />
+          /> */}
         </Center>
       </main>
     </div>
