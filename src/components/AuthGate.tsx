@@ -39,7 +39,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://sudarsanyes.github.io/axolotl-kitchen/",
+        emailRedirectTo: `${window.location.origin}/axolotl-kitchen/`,
       },
     });
     toaster.create({
