@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
+  Alert,
+  Box,
   Button,
   Container,
   Field,
@@ -285,133 +287,190 @@ export default function AddIngredient({
       </Fieldset.Root>
 
       <Fieldset.Root mt={8}>
-        <Stack>
-          <Fieldset.Legend>Pantry</Fieldset.Legend>
-          <Fieldset.HelperText>Ingredients in the pantry</Fieldset.HelperText>
-        </Stack>
-
-        <Table.Root size="sm" striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
-              <Table.ColumnHeader>Brand</Table.ColumnHeader>
-              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
-              <Table.ColumnHeader textAlign="end">Clear</Table.ColumnHeader>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {ingredients.map((ingredient) => (
-              <Table.Row key={ingredient.id}>
-                <Table.Cell>{ingredient.name}</Table.Cell>
-                <Table.Cell>{ingredient.brand}</Table.Cell>
-                <Table.Cell textAlign="end">
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="red"
-                  >
-                    <Tag.Label>{ingredient.expires_on}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-                <Table.Cell textAlign="end">
-                  <Popover.Root
-                    size="xs"
-                    // 🔥 CHANGED: Popover opens only if this row's ID matches
-                    open={openPopoverId === ingredient.id}
-                    // 🔥 CHANGED: When popover closes, reset ID
-                    onOpenChange={(e) => {
-                      if (!e.open) setOpenPopoverId(null);
-                    }}
-                  >
-                    <Popover.Trigger asChild>
-                      <Button
-                        size="xs"
-                        variant="surface"
-                        // 🔥 CHANGED: Set the open popover to this ingredient's ID
-                        onClick={() => setOpenPopoverId(ingredient.id ?? null)}
+        {/* Nothing is available banner */}
+        {ingredients.length == 0 && (
+          <Alert.Root status="info" variant="surface">
+            <Alert.Content>
+              <Alert.Title>Pantry’s out of goodies</Alert.Title>
+              <Alert.Description>
+                <Fieldset.Root>
+                  <Stack>
+                    <Fieldset.Legend>
+                      Your pantry shelves are looking a bit too clean…
+                      Everything’s either been baked into something delicious or
+                      has quietly expired behind the scenes.
+                    </Fieldset.Legend>
+                    <Fieldset.HelperText>
+                      Time to restock the magic ingredients!
+                    </Fieldset.HelperText>
+                  </Stack>
+                </Fieldset.Root>
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
+        {/* Availability table */}
+        {ingredients.length > 0 && (
+          <Box>
+            <Stack>
+              <Fieldset.Legend>Pantry</Fieldset.Legend>
+              <Fieldset.HelperText>
+                Ingredients in the pantry
+              </Fieldset.HelperText>
+            </Stack>
+            <Table.Root size="sm" striped>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
+                  <Table.ColumnHeader>Brand</Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">
+                    Expiry
+                  </Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">Clear</Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {ingredients.map((ingredient) => (
+                  <Table.Row key={ingredient.id}>
+                    <Table.Cell>{ingredient.name}</Table.Cell>
+                    <Table.Cell>{ingredient.brand}</Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="red"
                       >
-                        <FaRegTrashAlt />
-                      </Button>
-                    </Popover.Trigger>
+                        <Tag.Label>{ingredient.expires_on}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Popover.Root
+                        size="xs"
+                        // 🔥 CHANGED: Popover opens only if this row's ID matches
+                        open={openPopoverId === ingredient.id}
+                        // 🔥 CHANGED: When popover closes, reset ID
+                        onOpenChange={(e) => {
+                          if (!e.open) setOpenPopoverId(null);
+                        }}
+                      >
+                        <Popover.Trigger asChild>
+                          <Button
+                            size="xs"
+                            variant="surface"
+                            // 🔥 CHANGED: Set the open popover to this ingredient's ID
+                            onClick={() =>
+                              setOpenPopoverId(ingredient.id ?? null)
+                            }
+                          >
+                            <FaRegTrashAlt />
+                          </Button>
+                        </Popover.Trigger>
 
-                    <Portal>
-                      <Popover.Positioner>
-                        <Popover.Content width="200px" p={0}>
-                          <Popover.Arrow />
-                          <Popover.Body>
-                            <Popover.Title fontWeight="medium">
-                              Mark {ingredient.name} as over?
-                            </Popover.Title>
+                        <Portal>
+                          <Popover.Positioner>
+                            <Popover.Content width="200px" p={0}>
+                              <Popover.Arrow />
+                              <Popover.Body>
+                                <Popover.Title fontWeight="medium">
+                                  Mark {ingredient.name} as over?
+                                </Popover.Title>
 
-                            <HStack my={3}>
-                              <Button
-                                size="xs"
-                                variant="ghost"
-                                colorPalette="purple"
-                                // 🔥 CHANGED: Close popover by clearing ID
-                                onClick={() => {
-                                  markIngredientOver();
-                                  setOpenPopoverId(null);
-                                }}
-                              >
-                                Yes
-                              </Button>
+                                <HStack my={3}>
+                                  <Button
+                                    size="xs"
+                                    variant="ghost"
+                                    colorPalette="purple"
+                                    // 🔥 CHANGED: Close popover by clearing ID
+                                    onClick={() => {
+                                      markIngredientOver();
+                                      setOpenPopoverId(null);
+                                    }}
+                                  >
+                                    Yes
+                                  </Button>
 
-                              <Button
-                                size="xs"
-                                variant="outline"
-                                // 🔥 CHANGED: Close popover by clearing ID
-                                onClick={() => setOpenPopoverId(null)}
-                              >
-                                No, not yet!
-                              </Button>
-                            </HStack>
-                          </Popover.Body>
-                        </Popover.Content>
-                      </Popover.Positioner>
-                    </Portal>
-                  </Popover.Root>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
-
-        <Stack>
-          <Fieldset.Legend></Fieldset.Legend>
-          <Fieldset.HelperText>
-            Unavailable ingredients (expired)
-          </Fieldset.HelperText>
-        </Stack>
-
-        <Table.Root size="sm" striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
-              <Table.ColumnHeader>Brand</Table.ColumnHeader>
-              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {unavailableIngredients.map((ingredient) => (
-              <Table.Row key={ingredient.id}>
-                <Table.Cell>{ingredient.name}</Table.Cell>
-                <Table.Cell>{ingredient.brand}</Table.Cell>
-                <Table.Cell textAlign="end">
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="purple"
-                  >
-                    <Tag.Label>{ingredient.expires_on}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+                                  <Button
+                                    size="xs"
+                                    variant="outline"
+                                    // 🔥 CHANGED: Close popover by clearing ID
+                                    onClick={() => setOpenPopoverId(null)}
+                                  >
+                                    No, not yet!
+                                  </Button>
+                                </HStack>
+                              </Popover.Body>
+                            </Popover.Content>
+                          </Popover.Positioner>
+                        </Portal>
+                      </Popover.Root>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          </Box>
+        )}
+        {/* Nothing has expired banner */}
+        {ingredients.length > 0 && unavailableIngredients.length == 0 && (
+          <Alert.Root status="success" variant="outline">
+            <Alert.Content>
+              <Alert.Title>Everything’s fresh from the pantry</Alert.Title>
+              <Alert.Description>
+                <Fieldset.Root>
+                  <Stack>
+                    <Fieldset.Legend>
+                      All your ingredients are in tip‑top shape — nothing stale,
+                      nothing spoiled, everything ready for your next baking
+                      adventure.
+                    </Fieldset.Legend>
+                    <Fieldset.HelperText>Time to bake!</Fieldset.HelperText>
+                  </Stack>
+                </Fieldset.Root>
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
+        {/* Unavailability table */}
+        {unavailableIngredients.length > 0 && (
+          <Box my={9}>
+            <Stack>
+              <Fieldset.Legend>Expired</Fieldset.Legend>
+              <Fieldset.HelperText>
+                Unavailable ingredients (expired)
+              </Fieldset.HelperText>
+            </Stack>
+            <Table.Root size="sm" striped>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader>Ingredient</Table.ColumnHeader>
+                  <Table.ColumnHeader>Brand</Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">
+                    Expiry
+                  </Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {unavailableIngredients.map((ingredient) => (
+                  <Table.Row key={ingredient.id}>
+                    <Table.Cell>{ingredient.name}</Table.Cell>
+                    <Table.Cell>{ingredient.brand}</Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="purple"
+                      >
+                        <Tag.Label>{ingredient.expires_on}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          </Box>
+        )}
       </Fieldset.Root>
     </Container>
   );

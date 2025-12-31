@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
   Accordion,
+  Alert,
+  Box,
   Button,
   CheckboxCard,
   Container,
@@ -318,48 +320,80 @@ export default function AddLot({
             Save lot
           </Button>
         </Fieldset.Content>
+      </Fieldset.Root>
 
-        <Stack>
-          <Fieldset.Legend>Lots</Fieldset.Legend>
-          <Fieldset.HelperText>Current lot list</Fieldset.HelperText>
-        </Stack>
+      <Fieldset.Root mt={8}>
+        {/* No lot is available banner */}
+        {lots.length == 0 && (
+          <Alert.Root status="info" variant="surface">
+            <Alert.Content>
+              <Alert.Title>No lots fresh from the oven</Alert.Title>
+              <Alert.Description>
+                <Fieldset.Root>
+                  <Stack>
+                    <Fieldset.Legend>
+                      Looks like you haven’t baked up any batches to sell just
+                      yet. Either everything’s already been snapped up or the
+                      kitchen’s been taking a little nap.
+                    </Fieldset.Legend>
+                    <Fieldset.HelperText>
+                      Time to whip up a new lot!
+                    </Fieldset.HelperText>
+                  </Stack>
+                </Fieldset.Root>
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
 
-        <Table.Root size="sm" striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader>Product</Table.ColumnHeader>
-              <Table.ColumnHeader>Lot code</Table.ColumnHeader>
-              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {lots.map((lot) => (
-              <Table.Row key={lot.id}>
-                <Table.Cell>{lot.product_name}</Table.Cell>
-                <Table.Cell>
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="gray"
-                  >
-                    <Tag.Label>{lot.lot_code}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-                <Table.Cell textAlign="end">
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="red"
-                  >
-                    <Tag.Label>{lot.expires_on}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+        {/* Lot table */}
+        {lots.length > 0 && (
+          <Box>
+            <Stack>
+              <Fieldset.Legend>Lots</Fieldset.Legend>
+              <Fieldset.HelperText>Current lot list</Fieldset.HelperText>
+            </Stack>
+
+            <Table.Root size="sm" striped>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader>Product</Table.ColumnHeader>
+                  <Table.ColumnHeader>Lot code</Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">
+                    Expiry
+                  </Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {lots.map((lot) => (
+                  <Table.Row key={lot.id}>
+                    <Table.Cell>{lot.product_name}</Table.Cell>
+                    <Table.Cell>
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="gray"
+                      >
+                        <Tag.Label>{lot.lot_code}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="red"
+                      >
+                        <Tag.Label>{lot.expires_on}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          </Box>
+        )}
       </Fieldset.Root>
     </Container>
   );

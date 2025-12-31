@@ -36,6 +36,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async () => {
+    console.info("redirect url: " + window.location.origin);
     await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -44,7 +45,9 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       },
     });
     toaster.create({
-      description: "Check your email for the login link",
+      description:
+        "Check your email for the login link. You will be redirected automatically to: " +
+        `${window.location.origin}/axolotl-kitchen/`,
       type: "info",
     });
   };

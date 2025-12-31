@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import {
+  Alert,
+  Box,
   Button,
   Container,
   createListCollection,
@@ -250,60 +252,112 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
       </Fieldset.Root>
 
       <Fieldset.Root mt={8}>
-        <Stack>
-          <Fieldset.Legend>Sale made so far</Fieldset.Legend>
-          <Fieldset.HelperText>Happy customers list</Fieldset.HelperText>
-        </Stack>
+        {/* No lot is available banner */}
+        {saleLot.length == 0 && unsoldLots.length == 0 && (
+          <Alert.Root status="error" variant="surface">
+            <Alert.Content>
+              <Alert.Title>No lots fresh from the oven</Alert.Title>
+              <Alert.Description>
+                <Fieldset.Root>
+                  <Stack>
+                    <Fieldset.Legend>
+                      Looks like you haven’t baked up any batches to sell just
+                      yet. Either everything’s already been snapped up or the
+                      kitchen’s been taking a little nap.
+                    </Fieldset.Legend>
+                    <Fieldset.HelperText>
+                      Time to whip up a new lot!
+                    </Fieldset.HelperText>
+                  </Stack>
+                </Fieldset.Root>
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
+        {/* No lot is available banner */}
+        {saleLot.length == 0 && unsoldLots.length > 0 && (
+          <Alert.Root status="info" variant="surface">
+            <Alert.Content>
+              <Alert.Title>No sales just yet</Alert.Title>
+              <Alert.Description>
+                <Fieldset.Root>
+                  <Stack>
+                    <Fieldset.Legend>
+                      Your batches are ready and waiting — the shop just hasn’t
+                      had its first customer today. Don’t worry, every baker
+                      knows the first sale is just a sprinkle away. Keep the
+                      counter warm!
+                    </Fieldset.Legend>
+                    <Fieldset.HelperText>
+                      Fresh sales incoming!
+                    </Fieldset.HelperText>
+                  </Stack>
+                </Fieldset.Root>
+              </Alert.Description>
+            </Alert.Content>
+          </Alert.Root>
+        )}
+        {/* Sale table */}
+        {saleLot.length > 0 && (
+          <Box>
+            <Stack>
+              <Fieldset.Legend>Sale made so far</Fieldset.Legend>
+              <Fieldset.HelperText>Happy customers list</Fieldset.HelperText>
+            </Stack>
 
-        <Table.Root size="sm" striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeader>Customer</Table.ColumnHeader>
-              <Table.ColumnHeader>Product</Table.ColumnHeader>
-              <Table.ColumnHeader>Lot</Table.ColumnHeader>
-              <Table.ColumnHeader>Sold</Table.ColumnHeader>
-              <Table.ColumnHeader textAlign="end">Expiry</Table.ColumnHeader>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {saleLot.map((item) => (
-              <Table.Row key={item.id}>
-                <Table.Cell>{item.customer}</Table.Cell>
-                <Table.Cell>{item.product_name}</Table.Cell>
-                <Table.Cell>
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="gray"
-                  >
-                    <Tag.Label>{item.lot_code}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-                <Table.Cell>
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="blue"
-                  >
-                    <Tag.Label>{item.sold_on}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-                <Table.Cell textAlign="end">
-                  <Tag.Root
-                    mt="auto"
-                    w="auto"
-                    alignSelf="flex-start"
-                    colorPalette="red"
-                  >
-                    <Tag.Label>{item.expires_on}</Tag.Label>
-                  </Tag.Root>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table.Root>
+            <Table.Root size="sm" striped>
+              <Table.Header>
+                <Table.Row>
+                  <Table.ColumnHeader>Customer</Table.ColumnHeader>
+                  <Table.ColumnHeader>Product</Table.ColumnHeader>
+                  <Table.ColumnHeader>Lot</Table.ColumnHeader>
+                  <Table.ColumnHeader>Sold</Table.ColumnHeader>
+                  <Table.ColumnHeader textAlign="end">
+                    Expiry
+                  </Table.ColumnHeader>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {saleLot.map((item) => (
+                  <Table.Row key={item.id}>
+                    <Table.Cell>{item.customer}</Table.Cell>
+                    <Table.Cell>{item.product_name}</Table.Cell>
+                    <Table.Cell>
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="gray"
+                      >
+                        <Tag.Label>{item.lot_code}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="blue"
+                      >
+                        <Tag.Label>{item.sold_on}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                    <Table.Cell textAlign="end">
+                      <Tag.Root
+                        mt="auto"
+                        w="auto"
+                        alignSelf="flex-start"
+                        colorPalette="red"
+                      >
+                        <Tag.Label>{item.expires_on}</Tag.Label>
+                      </Tag.Root>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          </Box>
+        )}
       </Fieldset.Root>
     </Container>
   );
