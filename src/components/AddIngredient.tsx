@@ -42,14 +42,14 @@ export default function AddIngredient({
   const [notes, setNotes] = useState("");
   const [mrp, setMrp] = useState(0);
   const [expiresOn, setExpiresOn] = useState(
-    new Date().toISOString().slice(0, 10)
+    new Date(Date.now() + 86400000).toISOString().slice(0, 10)
   );
   const [loading, setLoading] = useState(false);
   const [unavailableIngredients, setUnavailableIngredients] = useState<
     Ingredient[]
   >([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [markedIngredient, setMarkedIngredient] = useState<string | null>(null); // stores the id of the ingredient.
+  const [openPopoverId, setOpenPopoverId] = useState<string | null>(null);
 
   const fetchIngredients = async () => {
     const { data, error } = await supabase
@@ -78,32 +78,44 @@ export default function AddIngredient({
   };
 
   const markIngredientOver = async () => {
-    alert("Marked ingredient: " + markedIngredient);
-    if (!markedIngredient) {
+    if (openPopoverId == null) {
       console.warn("No ingredient selected");
       return;
     }
 
-    console.log("Updating ingredient:", markedIngredient);
+    console.log("Updating ingredient as over:", openPopoverId);
 
-    const { data, error } = await supabase
-      .from("ingredients")
-      .update({ is_over: true })
-      .eq("id", markedIngredient)
-      .select();
+    try {
+      const { data, error } = await supabase
+        .from("ingredients")
+        .update({ is_over: true })
+        .eq("id", openPopoverId)
+        .select();
 
-    if (error) {
-      console.log("Error:", data);
+      if (error) {
+        console.log("Error:", data);
+        toaster.create({
+          description: "Failed to mark ingredient as over",
+          type: "error",
+        });
+      } else {
+        console.log("Updated rows:", data);
+        toaster.create({
+          description: "Ingredient marked as over",
+          type: "success",
+        });
+      }
+    } catch (err) {
+      console.error(err);
       toaster.create({
-        description: "Failed to mark ingredient as over",
+        description:
+          "Something went wrong while updating the ingredient as over!",
         type: "error",
       });
-    } else {
-      console.log("Updated rows:", data);
-      toaster.create({
-        description: "Ingredient marked as over",
-        type: "success",
-      });
+    } finally {
+      fetchIngredients();
+      fetchUnavailableIngredients();
+      onIngredientAdded();
     }
   };
 
@@ -139,7 +151,7 @@ export default function AddIngredient({
       setLot("");
       setNotes("");
       setMrp(0);
-      setExpiresOn("");
+      setExpiresOn(new Date(Date.now() + 86400000).toISOString().slice(0, 10));
     } catch (err) {
       console.error(err);
       toaster.create({
@@ -303,16 +315,26 @@ export default function AddIngredient({
                   </Tag.Root>
                 </Table.Cell>
                 <Table.Cell textAlign="end">
-                  <Popover.Root size="xs">
+                  <Popover.Root
+                    size="xs"
+                    // 🔥 CHANGED: Popover opens only if this row's ID matches
+                    open={openPopoverId === ingredient.id}
+                    // 🔥 CHANGED: When popover closes, reset ID
+                    onOpenChange={(e) => {
+                      if (!e.open) setOpenPopoverId(null);
+                    }}
+                  >
                     <Popover.Trigger asChild>
                       <Button
                         size="xs"
                         variant="surface"
-                        onClick={() => setMarkedIngredient(ingredient.id)}
+                        // 🔥 CHANGED: Set the open popover to this ingredient's ID
+                        onClick={() => setOpenPopoverId(ingredient.id ?? null)}
                       >
                         <FaRegTrashAlt />
                       </Button>
                     </Popover.Trigger>
+
                     <Portal>
                       <Popover.Positioner>
                         <Popover.Content width="200px" p={0}>
@@ -321,19 +343,26 @@ export default function AddIngredient({
                             <Popover.Title fontWeight="medium">
                               Mark {ingredient.name} as over?
                             </Popover.Title>
+
                             <HStack my={3}>
                               <Button
                                 size="xs"
                                 variant="ghost"
                                 colorPalette="purple"
-                                onClick={markIngredientOver}
+                                // 🔥 CHANGED: Close popover by clearing ID
+                                onClick={() => {
+                                  markIngredientOver();
+                                  setOpenPopoverId(null);
+                                }}
                               >
                                 Yes
                               </Button>
+
                               <Button
                                 size="xs"
                                 variant="outline"
-                                onClick={() => setMarkedIngredient(null)}
+                                // 🔥 CHANGED: Close popover by clearing ID
+                                onClick={() => setOpenPopoverId(null)}
                               >
                                 No, not yet!
                               </Button>

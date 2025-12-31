@@ -209,7 +209,7 @@ export default function SellLot({ lotsVersion }: SellLotProps) {
             </Select.Root>
           </Field.Root>
           <HStack>
-            <Field.Root required orientation="horizontal">
+            <Field.Root orientation="horizontal">
               <Field.Label>
                 Customer
                 <Field.RequiredIndicator />
