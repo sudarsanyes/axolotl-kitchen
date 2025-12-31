@@ -10,6 +10,7 @@ import {
   Tabs,
   HStack,
   VStack,
+  Button,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.png";
 import { supabase } from "../supabaseClient";
@@ -18,6 +19,19 @@ export default function InventoryPage() {
   const [lotsVersion, setLotsVersion] = useState(0);
   const [ingredientsVersion, setIngredientsVersion] = useState(0);
   const [authUser, setAuthUser] = useState("No user?!");
+
+  // sign out
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("Sign-out failed:", error.message);
+      return;
+    }
+
+    setAuthUser("");
+    console.log("User signed out");
+  }
 
   // Fetch ingredients
   useEffect(() => {
@@ -86,9 +100,18 @@ export default function InventoryPage() {
             <SellLot lotsVersion={lotsVersion} />
           </Tabs.Content>
         </Tabs.Root>
-        <Heading size="xs" textAlign="center" w="full" my={10}>
+        <Heading size="xs" textAlign="center" w="full" mt={10}>
           {authUser}
         </Heading>
+        <Button
+          size="xs"
+          textAlign="center"
+          w="full"
+          variant="ghost"
+          onClick={handleSignOut}
+        >
+          Logout
+        </Button>
       </Container>
     </Box>
   );
