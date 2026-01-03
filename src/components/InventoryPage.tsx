@@ -11,6 +11,7 @@ import {
   HStack,
   VStack,
   Button,
+  Link,
 } from "@chakra-ui/react";
 import logo from "../assets/logo.png";
 import { supabase } from "../supabaseClient";
@@ -67,16 +68,19 @@ export default function InventoryPage() {
               Cookies and Cakes
             </Heading>
           </VStack>
-
-          {/* Right: logo, vertically centered by the HStack's align="center" */}
-          <Image
-            src={logo}
-            alt="Thea's Cookies & Cakes Logo"
-            boxSize={{ base: "72px", md: "84px", lg: "92px" }}
-            borderRadius="full"
-            objectFit="cover"
-            flexShrink={0}
-          />
+          <HStack align="center">
+            <Link href="https://theascookiesncakes.com">
+              {/* Right: logo, vertically centered by the HStack's align="center" */}
+              <Image
+                src={logo}
+                alt="Thea's Cookies & Cakes Logo"
+                boxSize={{ base: "72px", md: "84px", lg: "92px" }}
+                borderRadius="full"
+                objectFit="cover"
+                flexShrink={0}
+              />
+            </Link>
+          </HStack>
         </HStack>
         <Tabs.Root defaultValue="stockpile">
           <Tabs.List>
