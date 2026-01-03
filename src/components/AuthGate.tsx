@@ -41,13 +41,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       email,
       options: {
         shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/axolotl-kitchen/`,
+        emailRedirectTo: `${window.location.origin}/`,
       },
     });
     toaster.create({
       description:
         "Check your email for the login link. You will be redirected automatically to: " +
-        `${window.location.origin}/axolotl-kitchen/`,
+        `${window.location.origin}/`,
       type: "info",
     });
   };
